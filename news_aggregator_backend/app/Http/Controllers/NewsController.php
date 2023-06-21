@@ -76,11 +76,13 @@ class NewsController extends Controller
                 case "NYTimesAPI":
                     foreach($articles as $article){
                         $datetime = new \DateTime($article->pub_date);
+                        if (array_key_exists(0, $article->byline->person))
+                            $author = (array_key_exists(0, $article->byline->person)) ? $article->byline->person[0]->firstname . ' ' . $article->byline->person[0]->middlename . ' ' . $article->byline->person[0]->lastname : '';
                         array_push($combinedNews, (object) [
                             "id" => $article->_id,
                             "source" => $article->source,
                             "title" => $article->headline->main,
-                            "author" => $article->byline->person[0]->firstname . ' ' . $article->byline->person[0]->middlename . ' ' . $article->byline->person[0]->lastname,
+                            "author" => $author,
                             "publishedAt" => $datetime->format('Y-m-d\TH:i:s\Z'),
                             "url" => $article->web_url,
                         ]);

@@ -23,6 +23,8 @@ use App\Http\Controllers\NewsController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
+Route::get('/home', [NewsController::class, 'getCombinedNews']);
+
 
 Route::middleware('auth:sanctum')->get('/top-headlines', [NewsController::class, 'getTopHeadlinesNewsAPI']);
 Route::middleware('auth:sanctum')->get('/top-articles', [NewsController::class, 'getTopArticlesNYTimesAPI']); //
