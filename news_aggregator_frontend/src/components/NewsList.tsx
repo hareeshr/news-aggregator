@@ -16,7 +16,7 @@ const NewsList = ({ newsArticles, headline, isLoading, error } : NewsListProps) 
         {isLoading
             ? <div>Loading...</div>
             : (
-                <ul className="grid grid-cols-2 gap-x-3 gap-y-10">
+                <ul className="grid grid-cols-1 gap-x-5 gap-y-10 md:grid-cols-2">
                     {newsArticles?.map((newsItem) => (
                         <NewsArticle key={newsItem.id} newsItem={newsItem} />
                     ))}

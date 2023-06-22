@@ -7,3 +7,8 @@ export interface NewsItem {
     publishedAt: string;
     url: string;
 }
+
+export interface categoryItem {
+    key: string,
+    name: string
+}

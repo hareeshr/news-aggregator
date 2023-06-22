@@ -32,4 +32,17 @@ class NewsApiLibrary
 
         return [];
     }
+    public function getCategories(){
+        $categories = [
+            (object) ['key'=>'business', 'name'=>'Business'],
+            (object) ['key'=>'entertainment', 'name'=>'Entertainment'],
+            (object) ['key'=>'general', 'name'=>'General'],
+            (object) ['key'=>'health', 'name'=>'Health'],
+            (object) ['key'=>'science', 'name'=>'Science'],
+            (object) ['key'=>'sports', 'name'=>'Sports'],
+            (object) ['key'=>'technology', 'name'=>'Technology']
+        ];
+
+        return $categories;
+    }
 }

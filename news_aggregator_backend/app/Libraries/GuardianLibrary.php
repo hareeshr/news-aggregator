@@ -31,4 +31,27 @@ class GuardianLibrary
         }
 
     }
+    public function getCategories(){
+        $categories = [];
+
+        $url = "{$this->newsApiURL}sections?api-key={$this->newsApiKey}";
+
+        $response = Http::get($url);
+        
+        if ($response->ok()) {
+            $articles = $response->json()['response']['results'];
+            $articlesObject = json_decode(json_encode($articles), false);
+            foreach ($articlesObject as $category){
+                array_push($categories, 
+                    (object) [
+                        'key' => $category->id,
+                        'name' => $category->webTitle,
+                    ]
+                );
+            }
+        }
+
+        return $categories;
+    }
+    
 }

@@ -10,8 +10,8 @@ type NewsArticleProps = {
 
 const NewsArticle = ({ newsItem } : NewsArticleProps) => {
   return (
-    <li className="border-l-4 border-gray-800 pl-3 hover:translate-x-1 transition-transform">
-        <Link to={newsItem.url} target="_blank" rel="noopener noreferrer">
+    <li className="border-l-4 border-gray-800 pl-3 hover:translate-x-1 transition-transform flex">
+        <Link to={newsItem.url} target="_blank" rel="noopener noreferrer" className="flex flex-col justify-between content-between w-full">
             
             <h2>{newsItem.title}</h2>
             <div className="flex gap-2 items-center py-2">

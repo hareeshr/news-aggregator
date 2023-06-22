@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\UserController;
 
 
 /*
@@ -23,10 +24,12 @@ use App\Http\Controllers\NewsController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
-Route::get('/home', [NewsController::class, 'getCombinedNews']);
+Route::get('/getHomeArticles', [NewsController::class, 'getHomeArticles']);
+Route::get('/getCategories', [NewsController::class, 'getCategories']);
 
 
-Route::middleware('auth:sanctum')->get('/top-headlines', [NewsController::class, 'getTopHeadlinesNewsAPI']);
-Route::middleware('auth:sanctum')->get('/top-articles', [NewsController::class, 'getTopArticlesNYTimesAPI']); //
-Route::middleware('auth:sanctum')->get('/top-news', [NewsController::class, 'getLatestNewsGuardian']); //
-Route::middleware('auth:sanctum')->get('/combined-news', [NewsController::class, 'getCombinedNews']); //
+
+Route::middleware('auth:sanctum')->get('/user/details', [UserController::class, 'getUserDetails']); //
+Route::middleware('auth:sanctum')->post('/user/preferences', [UserController::class, 'saveUserPreferences']); //
+Route::middleware('auth:sanctum')->get('/user/preferences', [UserController::class, 'getUserPreferences']); //
+// Route::middleware('auth:sanctum')->get('/combined-news', [NewsController::class, 'getCombinedNews']); //

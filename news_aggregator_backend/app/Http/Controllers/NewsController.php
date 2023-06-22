@@ -15,7 +15,7 @@ use App\Libraries\GuardianLibrary;
 class NewsController extends Controller
 {
 
-    public function getCombinedNews(Request $request)
+    public function getHomeArticles(Request $request)
     {
         $this->validate($request, [
             'q' => 'string',
@@ -55,6 +55,21 @@ class NewsController extends Controller
         return response()->json($combinedNews);
     }
 
+    public function getCategories(Request $request) {
+        $newsAPI = new NewsApiLibrary();
+        $nyTimesAPI = new NyTimesLibrary();
+        $GuardianAPI = new GuardianLibrary();
+        $guardianCategories = $GuardianAPI->getCategories();
+
+        $categories = (object) [
+            'NewsAPI' => $newsAPI->getCategories(),
+            'NyTimes' => $nyTimesAPI->getCategories(),
+            'Guardian' => $GuardianAPI->getCategories()
+        ];
+
+        return $categories;
+    }
+
     private function newsCombiner($sources){
         $combinedNews = [];
 
@@ -76,6 +91,7 @@ class NewsController extends Controller
                 case "NYTimesAPI":
                     foreach($articles as $article){
                         $datetime = new \DateTime($article->pub_date);
+                        $author = null;
                         if (array_key_exists(0, $article->byline->person))
                             $author = (array_key_exists(0, $article->byline->person)) ? $article->byline->person[0]->firstname . ' ' . $article->byline->person[0]->middlename . ' ' . $article->byline->person[0]->lastname : '';
                         array_push($combinedNews, (object) [

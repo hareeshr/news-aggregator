@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Header from './components/Header';
 import { AuthProvider } from './context/AuthContext';
 import { BrowserRouter } from 'react-router-dom'
+import { DataProvider } from './context/DataContext';
 
 
 const queryClient = new QueryClient();
@@ -17,13 +18,15 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <BrowserRouter>
-          <div className="container mx-auto my-0 justify-self-center p-5 ">
-            <Header />
-            <MainContent />
-            <ToastContainer />
-          </div>
-        </BrowserRouter>
+        <DataProvider>
+          <BrowserRouter>
+            <div className="container mx-auto my-0 justify-self-center p-5 ">
+              <Header />
+              <MainContent />
+              <ToastContainer />
+            </div>
+          </BrowserRouter>
+        </DataProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
