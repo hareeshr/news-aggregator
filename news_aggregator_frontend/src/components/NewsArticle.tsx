@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link } from 'react-router-dom';
 import { NewsItem } from './../types/news.ts'
 import { NewspaperIcon } from '@heroicons/react/24/solid';

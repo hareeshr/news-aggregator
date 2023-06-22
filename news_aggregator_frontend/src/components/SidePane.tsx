@@ -74,7 +74,7 @@ const SidePane = ({toggleSidePane}: SidePaneProps) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        const data = await response.json();
+        await response.json();
         // Handle response data here
         if (response.ok) {
             // save successful
