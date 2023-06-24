@@ -6,79 +6,114 @@ use jcobhams\NewsApi\NewsApi;
 
 class NewsApiLibrary
 {
-    private $newsapi;
+    private $newsApi;
 
     public function __construct()
     {
-        $newsApiKey = env('NEWSAPI_API_KEY');
-        $this->newsapi = new NewsApi($newsApiKey);
+        $newsApiKey = config('services.newsapi.api_key');
+        $this->newsApi = new NewsApi($newsApiKey);
     }
 
+    /**
+     * Get articles from NewsAPI.
+     *
+     * @return array
+     */
     public function getArticles()
     {
-        
         $q = null;
         $sources = null;
         $country = 'us';
-        $page_size = 10;
+        $pageSize = 10;
         $page = 1;
         $category = null;
 
-        $top_headlines = $this->newsapi->getTopHeadlines($q, $sources, $country, $category, $page_size, $page);
+        $topHeadlines = $this->newsApi->getTopHeadlines($q, $sources, $country, $category, $pageSize, $page);
 
-        if ($top_headlines) {
-            return $top_headlines->articles;
+        if ($topHeadlines && $topHeadlines->status === 'ok') {
+            return $topHeadlines->articles;
         }
 
         return [];
     }
 
-    public function getPersonalizedArticles( $category ) {
-
+    /**
+     * Get personalized articles from NewsAPI based on category.
+     *
+     * @param  string  $category
+     * @return array
+     */
+    public function getPersonalizedArticles($category)
+    {
         $q = null;
         $sources = null;
         $country = 'us';
-        $page_size = 10;
+        $pageSize = 10;
         $page = 1;
 
-        $top_headlines = $this->newsapi->getTopHeadlines($q, $sources, $country, $category, $page_size, $page);
+        $topHeadlines = $this->newsApi->getTopHeadlines($q, $sources, $country, $category, $pageSize, $page);
 
-        if ($top_headlines) {
-            return $top_headlines->articles;
+        if ($topHeadlines && $topHeadlines->status === 'ok') {
+            return $topHeadlines->articles;
         }
 
         return [];
     }
 
-    public function search( $q, $category, $from, $to ) {
-
+    /**
+     * Search articles from NewsAPI based on search parameters.
+     *
+     * @param  string|null  $q
+     * @param  string|null  $category
+     * @param  string|null  $from
+     * @param  string|null  $to
+     * @return array
+     */
+    public function search($q = null, $category = null, $from = null, $to = null)
+    {
         $sources = null;
         $domains = null;
-        $exclude_domains = null;
-        $language = "en";
-        $sort_by = null;
-        $page_size = 10;
+        $excludeDomains = null;
+        $language = 'en';
+        $sortBy = null;
+        $pageSize = 10;
         $page = 1;
 
-        $top_headlines = $this->newsapi->getEverything( $q.'+'.$category, $sources, $domains, $exclude_domains, $from, $to, $language, $sort_by, $page_size, $page );
-        
+        $articles = $this->newsApi->getEverything(
+            $q,
+            $sources,
+            $domains,
+            $excludeDomains,
+            $from,
+            $to,
+            $language,
+            $sortBy,
+            $pageSize,
+            $page
+        );
 
-
-        if ($top_headlines) {
-            return $top_headlines->articles;
+        if ($articles && $articles->status === 'ok') {
+            return $articles->articles;
         }
 
         return [];
     }
-    public function getCategories(){
+
+    /**
+     * Get categories.
+     *
+     * @return array
+     */
+    public function getCategories()
+    {
         $categories = [
-            (object) ['key'=>'business', 'name'=>'Business'],
-            (object) ['key'=>'entertainment', 'name'=>'Entertainment'],
-            (object) ['key'=>'general', 'name'=>'General'],
-            (object) ['key'=>'health', 'name'=>'Health'],
-            (object) ['key'=>'science', 'name'=>'Science'],
-            (object) ['key'=>'sports', 'name'=>'Sports'],
-            (object) ['key'=>'technology', 'name'=>'Technology']
+            (object)['key' => 'business', 'name' => 'Business'],
+            (object)['key' => 'entertainment', 'name' => 'Entertainment'],
+            (object)['key' => 'general', 'name' => 'General'],
+            (object)['key' => 'health', 'name' => 'Health'],
+            (object)['key' => 'science', 'name' => 'Science'],
+            (object)['key' => 'sports', 'name' => 'Sports'],
+            (object)['key' => 'technology', 'name' => 'Technology'],
         ];
 
         return $categories;

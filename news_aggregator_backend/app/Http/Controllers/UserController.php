@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 
-
 class UserController extends Controller
 {
+    /**
+     * Get user details.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getUserDetails()
     {
         try {
@@ -24,5 +28,4 @@ class UserController extends Controller
             return response()->json(['message' => 'Failed to fetch user'], 500);
         }
     }
-
 }

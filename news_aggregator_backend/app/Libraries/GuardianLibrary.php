@@ -11,13 +11,16 @@ class GuardianLibrary
 
     public function __construct()
     {
-        $this->newsApiKey = env('GUARDIAN_API_KEY');
-
+        $this->newsApiKey = config('services.guardian.api_key');
     }
 
+    /**
+     * Get articles from Guardian API.
+     *
+     * @return array
+     */
     public function getArticles()
     {
-        
         $url = "{$this->newsApiURL}search?api-key={$this->newsApiKey}";
 
         $response = Http::get($url);
@@ -29,8 +32,14 @@ class GuardianLibrary
         } else {
             return [];
         }
-
     }
+
+    /**
+     * Get personalized articles from Guardian API based on categories.
+     *
+     * @param  string  $categories
+     * @return array
+     */
     public function getPersonalizedArticles($categories)
     {
         $url = "{$this->newsApiURL}search?section={$categories}&api-key={$this->newsApiKey}";
@@ -44,19 +53,32 @@ class GuardianLibrary
         } else {
             return [];
         }
-
     }
-    public function search( $q, $categories, $begin_date, $end_date )
+
+    /**
+     * Search articles from Guardian API based on search parameters.
+     *
+     * @param  string|null  $q
+     * @param  string|null  $categories
+     * @param  string|null  $begin_date
+     * @param  string|null  $end_date
+     * @return array
+     */
+    public function search($q = null, $categories = null, $begin_date = null, $end_date = null)
     {
         $qfilter = [];
-        if($q)
+        if ($q) {
             $qfilter['q'] = $q;
-        if($categories)
+        }
+        if ($categories) {
             $qfilter['section'] = $categories;
-        if($begin_date)
+        }
+        if ($begin_date) {
             $qfilter['from-date'] = $begin_date;
-        if($end_date)
+        }
+        if ($end_date) {
             $qfilter['to-date'] = $end_date;
+        }
 
         $queryString = http_build_query($qfilter);
 
@@ -71,20 +93,26 @@ class GuardianLibrary
         } else {
             return [];
         }
-
     }
-    public function getCategories(){
+
+    /**
+     * Get categories from Guardian API.
+     *
+     * @return array
+     */
+    public function getCategories()
+    {
         $categories = [];
 
         $url = "{$this->newsApiURL}sections?api-key={$this->newsApiKey}";
 
         $response = Http::get($url);
-        
+
         if ($response->ok()) {
             $articles = $response->json()['response']['results'];
             $articlesObject = json_decode(json_encode($articles), false);
-            foreach ($articlesObject as $category){
-                array_push($categories, 
+            foreach ($articlesObject as $category) {
+                array_push($categories,
                     (object) [
                         'key' => $category->id,
                         'name' => $category->webTitle,
@@ -95,5 +123,4 @@ class GuardianLibrary
 
         return $categories;
     }
-    
 }

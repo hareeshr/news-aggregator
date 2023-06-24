@@ -9,7 +9,12 @@ use Illuminate\Validation\ValidationException;
 
 class PreferenceController extends Controller
 {
-    
+    /**
+     * Save user preferences.
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function saveUserPreferences(Request $request)
     {
         try {
@@ -20,20 +25,7 @@ class PreferenceController extends Controller
             }
 
             // Validate the request data
-            $request->validate([
-                'NewsAPI' => 'required|boolean',
-                'NewsAPICategories' => 'array',
-                'NewsAPICategories.*.key' => 'required|string',
-                'NewsAPICategories.*.name' => 'required|string',
-                'NyTimes' => 'required|boolean',
-                'NyTimesCategories' => 'array',
-                'NyTimesCategories.*.key' => 'required|string',
-                'NyTimesCategories.*.name' => 'required|string',
-                'Guardian' => 'required|boolean',
-                'GuardianCategories' => 'array',
-                'GuardianCategories.*.key' => 'required|string',
-                'GuardianCategories.*.name' => 'required|string',
-            ]);
+            $this->validateUserPreferences($request);
 
             // Retrieve the preference data from the request
             $preferenceData = $request->json()->all();
@@ -52,6 +44,35 @@ class PreferenceController extends Controller
         }
     }
 
+    /**
+     * Validate user preferences request.
+     *
+     * @param  Request  $request
+     * @throws ValidationException
+     */
+    private function validateUserPreferences(Request $request)
+    {
+        $request->validate([
+            'NewsAPI' => 'required|boolean',
+            'NewsAPICategories' => 'array',
+            'NewsAPICategories.*.key' => 'required|string',
+            'NewsAPICategories.*.name' => 'required|string',
+            'NyTimes' => 'required|boolean',
+            'NyTimesCategories' => 'array',
+            'NyTimesCategories.*.key' => 'required|string',
+            'NyTimesCategories.*.name' => 'required|string',
+            'Guardian' => 'required|boolean',
+            'GuardianCategories' => 'array',
+            'GuardianCategories.*.key' => 'required|string',
+            'GuardianCategories.*.name' => 'required|string',
+        ]);
+    }
+
+    /**
+     * Get user preferences.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getUserPreferences()
     {
         try {
