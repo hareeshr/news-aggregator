@@ -1,5 +1,5 @@
 import { XMarkIcon, CubeTransparentIcon } from '@heroicons/react/24/solid'
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useData } from './../context/DataContext';
 import { useState, useEffect, useRef } from 'react'
 import UserData from './UserData';
@@ -22,11 +22,64 @@ type SidePaneProps = {
     toggleSidePane: () => void
 }
 
-const SidePane = ({toggleSidePane}: SidePaneProps) => {
-    const token = localStorage.getItem('token');
-    const {categories, isLoadingData} = useData();
+const fetchUserPreferences = async (token: string): Promise<PreferenceData> => {
+  const response = await fetch('http://localhost:8000/api/user/preferences', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-  
+  if (!response.ok) {
+    throw new Error('Failed to fetch user data');
+  }
+
+  return response.json();
+};
+
+const useSaveUserPreferences = (token: string) => {
+  const [isLoadingSave, setIsLoadingSave] = useState(false);
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation(
+    async (formData: PreferenceData) => {
+      setIsLoadingSave(true);
+      const response = await fetch('http://localhost:8000/api/user/preferences', {
+        method: 'POST',
+        body: JSON.stringify(formData),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save preferences.');
+      }
+
+      setIsLoadingSave(false);
+      return response.json();
+    },
+    {
+      onSuccess: () => {
+        toast.success('Preferences Saved Successfully.');
+        queryClient.invalidateQueries('personalizedNews'); // Invalidates the 'news' query to trigger a refetch
+      },
+      onError: () => {
+        toast.error('Failed to save preferences.');
+      },
+    }
+  );
+
+  return {
+    mutation,
+    isLoadingSave,
+  };
+};
+
+const SidePane = ({toggleSidePane}: SidePaneProps) => {
+  const token = localStorage.getItem('token');
+  const {categories, isLoadingData} = useData();
+
   const [NewsAPI, setNewsAPI] = useState(false);
   const [NewsAPIOptions, setNewsAPIOptions] = useState<categoryItem[]>([]);
   const [NyTimes, setNyTimes] = useState(false);
@@ -38,19 +91,9 @@ const SidePane = ({toggleSidePane}: SidePaneProps) => {
   const NyTimesRef = useRef<Multiselect | null>(null);
   const GuardianRef = useRef<Multiselect | null>(null);
 
-  const [isLoadingSave, setIsLoadingSave] = useState(false);
-
-  const { data:preferences, isLoading } = useQuery<PreferenceData>('PreferenceData', async () => {
-    const response = await fetch('http://localhost:8000/api/user/preferences', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (!response.ok) {
-      throw new Error('Failed to fetch user data');
-    }
-    return response.json();
-  });
+  const { data: preferences, isLoading } = useQuery<PreferenceData>('PreferenceData', () =>
+  fetchUserPreferences(token || '')
+  );
 
   useEffect(() => {
     if(!isLoading) {
@@ -63,29 +106,7 @@ const SidePane = ({toggleSidePane}: SidePaneProps) => {
     }
   }, [preferences]);
 
-  const mutation = useMutation(
-    async (formData: PreferenceData) => {
-        setIsLoadingSave(true);
-        const response = await fetch('http://localhost:8000/api/user/preferences', {
-          method: 'POST',
-          body: JSON.stringify(formData),
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        await response.json();
-        // Handle response data here
-        if (response.ok) {
-            // save successful
-            toast.success('Preferences Saved Successfully.');
-        } else {
-            // save failed
-          toast.error('Failed to save preferences.');
-        }
-        setIsLoadingSave(false);
-      }
-    );
+  const { mutation, isLoadingSave } = useSaveUserPreferences(token || '');
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -126,6 +147,7 @@ const SidePane = ({toggleSidePane}: SidePaneProps) => {
                             name="NewsAPI"
                             selectedValues={NewsAPIOptions}
                             sourceRef={NewsAPIRef}
+                            singleSelect={true}
                             />
                         
                         {/* New York Times Options */}

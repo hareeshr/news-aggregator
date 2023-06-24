@@ -11,9 +11,10 @@ type PreferenceSourceProps = {
     id: string,
     name: string,
     selectedValues: categoryItem[],
-    sourceRef: React.MutableRefObject<Multiselect | null>
+    sourceRef: React.MutableRefObject<Multiselect | null>,
+    singleSelect?: boolean,
 }
-const PreferenceSource = ({ source, isLoadingData, setSouce, sourceRef, categories, selectedValues,  id, name }: PreferenceSourceProps) => {
+const PreferenceSource = ({ source, isLoadingData, setSouce, sourceRef, categories, selectedValues,  id, name, singleSelect= false }: PreferenceSourceProps) => {
 
   const handlePreference = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSouce(event.target.checked);
@@ -26,7 +27,7 @@ const PreferenceSource = ({ source, isLoadingData, setSouce, sourceRef, categori
         backgroundColor: 'transparent',
       },
       chips: {
-        backgroundColor: 'gray',
+        border: '1px solid gray',
       },
       searchBox: {
         borderColor: '#7c7c7c',
@@ -58,6 +59,7 @@ const PreferenceSource = ({ source, isLoadingData, setSouce, sourceRef, categori
             placeholder="Select categories..."
             style={MultiSelectStyle}
             ref={sourceRef}
+            singleSelect={singleSelect}
             />
         }
     </>

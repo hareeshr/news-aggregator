@@ -31,6 +31,21 @@ class GuardianLibrary
         }
 
     }
+    public function getPersonalizedArticles($categories)
+    {
+        $url = "{$this->newsApiURL}search?section={$categories}&api-key={$this->newsApiKey}";
+
+        $response = Http::get($url);
+
+        if ($response->ok()) {
+            $articles = $response->json()['response']['results'];
+            $articlesObject = json_decode(json_encode($articles), false);
+            return $articlesObject;
+        } else {
+            return [];
+        }
+
+    }
     public function getCategories(){
         $categories = [];
 

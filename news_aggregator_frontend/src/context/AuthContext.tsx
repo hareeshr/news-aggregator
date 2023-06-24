@@ -1,4 +1,5 @@
 import React, { createContext, useState } from 'react';
+import { useQueryClient } from 'react-query';
 
 type AuthContextType = {
   isLoggedIn: boolean;
@@ -14,6 +15,7 @@ export const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children:React.ReactNode}) => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+  const queryClient = useQueryClient();
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -22,6 +24,7 @@ export const AuthProvider = ({ children }: { children:React.ReactNode}) => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     setIsLoggedIn(false);
+    queryClient.clear();
   };
 
   return (

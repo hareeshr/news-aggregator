@@ -32,4 +32,5 @@ Route::get('/getCategories', [NewsController::class, 'getCategories']);
 Route::middleware('auth:sanctum')->get('/user/details', [UserController::class, 'getUserDetails']); //
 Route::middleware('auth:sanctum')->post('/user/preferences', [UserController::class, 'saveUserPreferences']); //
 Route::middleware('auth:sanctum')->get('/user/preferences', [UserController::class, 'getUserPreferences']); //
+Route::middleware('auth:sanctum')->get('/getPersonalizedArticles', [NewsController::class, 'getPersonalizedArticles']); //
 // Route::middleware('auth:sanctum')->get('/combined-news', [NewsController::class, 'getCombinedNews']); //

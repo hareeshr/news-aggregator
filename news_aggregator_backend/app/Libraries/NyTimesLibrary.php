@@ -31,6 +31,23 @@ class NyTimesLibrary
         }
 
     }
+
+    public function getPersonalizedArticles($categories)
+    {
+        
+        $url = "{$this->newsApiURL}articlesearch.json?fq=type_of_material:(News) AND section_name.contains:(".'"'.$categories.'"'.")&sort=newest&api-key={$this->newsApiKey}";
+
+        $response = Http::get($url);
+
+        if ($response->ok()) {
+            $articles = $response->json()['response']['docs'];
+            $articlesObject = json_decode(json_encode($articles), false);
+            return $articlesObject;
+        } else {
+            return [];
+        }
+
+    }
     
     public function getCategories(){
         $categories = [

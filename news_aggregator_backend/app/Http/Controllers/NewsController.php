@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use jcobhams\NewsApi\NewsApi;
-use Illuminate\Support\Facades\Http;
-
+use Illuminate\Support\Facades\Auth;
 
 use App\Libraries\NewsApiLibrary;
 use App\Libraries\NyTimesLibrary;
 use App\Libraries\GuardianLibrary;
+use Illuminate\Support\Facades\Log;
+
 
 
 class NewsController extends Controller
@@ -17,26 +17,21 @@ class NewsController extends Controller
 
     public function getHomeArticles(Request $request)
     {
-        $this->validate($request, [
-            'q' => 'string',
-            'sources' => 'string',
-            'country' => 'string|in:ae,ar,at,au,be,bg,br,ca,ch,cn,co,cu,cz,de,eg,fr,gb,gr,hk,hu,id,ie,il,in,it,jp,kr,lt,lv,ma,mx,my,ng,nl,no,nz,ph,pl,pt,ro,rs,ru,sa,se,sg,si,sk,th,tr,tw,ua,us,ve,za',
-            'category' => 'string|in:business,entertainment,general,health,science,sports,technology',
-            'page_size' => 'integer',
-            'page' => 'integer',
-        ]);
-
-
-        $q = $request->input('q');
-        $sources = $request->input('sources');
-        $country = $request->input('country');
-        $category = $request->input('category');
-        $page_size = $request->input('page_size');
-        $page = $request->input('page');
+        // $this->validate($request, [
+        //     'q' => 'string',
+        //     'sources' => 'string',
+        //     'country' => 'string|in:ae,ar,at,au,be,bg,br,ca,ch,cn,co,cu,cz,de,eg,fr,gb,gr,hk,hu,id,ie,il,in,it,jp,kr,lt,lv,ma,mx,my,ng,nl,no,nz,ph,pl,pt,ro,rs,ru,sa,se,sg,si,sk,th,tr,tw,ua,us,ve,za',
+        //     'category' => 'string|in:business,entertainment,general,health,science,sports,technology',
+        //     'page_size' => 'integer',
+        //     'page' => 'integer',
+        // ]);
+        return $this->allHomeArticles();
+    }
+    private function  allHomeArticles(){
 
         // Get articles from NewsAPI
         $newsAPI = new NewsApiLibrary();
-        $newsApiArticles = $newsAPI->getArticles($q, $sources, $country, $category, $page_size, $page);
+        $newsApiArticles = $newsAPI->getArticles();
         // return response()->json($newsApiArticles);
 
         $nyTimesAPI = new NyTimesLibrary();
@@ -54,12 +49,72 @@ class NewsController extends Controller
 
         return response()->json($combinedNews);
     }
+    public function getPersonalizedArticles(Request $request)
+    {
+        // try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+
+            $newsArticles = [];
+            $preference = $user->preference;
+            $preferenceData = json_decode($preference->preference_data, false);
+
+            if($preferenceData->NewsAPI == false
+                && $preferenceData->NyTimes == false
+                && $preferenceData->Guardian == false){
+                    return $this->allHomeArticles();
+                }
+
+            if($preferenceData->NewsAPI == true){
+                $categories = implode(", ", array_column($preferenceData->NewsAPICategories, "key"));
+                
+                $newsAPI = new NewsApiLibrary();
+                if($categories == "")
+                    $newsApiArticles = $newsAPI->getArticles();
+                else
+                    $newsApiArticles = $newsAPI->getPersonalizedArticles($categories);
+                $newsArticles["NewsAPI"] = $newsApiArticles;
+            }
+
+            if($preferenceData->NyTimes == true){
+                $categories = implode('", "', array_column($preferenceData->NyTimesCategories, "key"));
+                
+                $nyTimesAPI = new NyTimesLibrary();
+                if($categories == "")
+                    $nyTimesArticles = $nyTimesAPI->getArticles();
+                else
+                    $nyTimesArticles = $nyTimesAPI->getPersonalizedArticles($categories);
+
+                $newsArticles["NYTimesAPI"] = $nyTimesArticles;
+            }
+            
+            if($preferenceData->Guardian == true){
+                $categories = implode('|', array_column($preferenceData->GuardianCategories, "key"));
+                
+                $GuardianAPI = new GuardianLibrary();
+                if($categories == "")
+                    $guardianArticles = $GuardianAPI->getArticles();
+                else
+                    $guardianArticles = $GuardianAPI->getPersonalizedArticles($categories);
+
+                    $newsArticles["GuardianAPI"] = $guardianArticles;
+            }
+
+            $combinedNews = $this->newsCombiner($newsArticles);
+ 
+            return response()->json($combinedNews);
+        // } catch (\Exception $e) {
+        //     return response()->json(['message' => 'Failed to fetch personalized articles','error' => $e], 500);
+        // }
+    }
 
     public function getCategories(Request $request) {
         $newsAPI = new NewsApiLibrary();
         $nyTimesAPI = new NyTimesLibrary();
         $GuardianAPI = new GuardianLibrary();
-        $guardianCategories = $GuardianAPI->getCategories();
 
         $categories = (object) [
             'NewsAPI' => $newsAPI->getCategories(),
