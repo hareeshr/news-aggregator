@@ -1,9 +1,9 @@
 import React from 'react'
 import Multiselect from 'multiselect-react-dropdown';
-import { categoryItem } from './../types/news'
+import { categoryItem } from '../types/news'
 
 
-type PreferenceSourceProps = {
+type NewsSourceFilterProps = {
     source: boolean,
     setSouce: React.Dispatch<React.SetStateAction<boolean>>,
     isLoadingData: boolean,
@@ -14,9 +14,9 @@ type PreferenceSourceProps = {
     sourceRef: React.MutableRefObject<Multiselect | null>,
     singleSelect?: boolean,
 }
-const PreferenceSource = ({ source, isLoadingData, setSouce, sourceRef, categories, selectedValues,  id, name, singleSelect= false }: PreferenceSourceProps) => {
+const NewsSourceFilter = ({ source, isLoadingData, setSouce, sourceRef, categories, selectedValues,  id, name, singleSelect= false }: NewsSourceFilterProps) => {
 
-  const handlePreference = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNews = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSouce(event.target.checked);
   };
 
@@ -45,7 +45,7 @@ const PreferenceSource = ({ source, isLoadingData, setSouce, sourceRef, categori
                 type="checkbox"
                 id={id}
                 checked={source}
-                onChange={handlePreference}
+                onChange={handleNews}
                 className="mr-2"
             />
             <label htmlFor={id}>{name}</label>
@@ -66,4 +66,4 @@ const PreferenceSource = ({ source, isLoadingData, setSouce, sourceRef, categori
   )
 }
 
-export default PreferenceSource
+export default NewsSourceFilter

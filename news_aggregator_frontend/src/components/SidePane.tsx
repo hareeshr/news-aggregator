@@ -5,7 +5,7 @@ import Multiselect from 'multiselect-react-dropdown';
 import { toast } from 'react-toastify';
 import { useData } from './../context/DataContext';
 import UserData from './UserData';
-import PreferenceSource from './PreferenceSource';
+import NewsSourceFilter from './NewsSourceFilter';
 import { categoryItem } from './../types/news'
 
 
@@ -138,7 +138,7 @@ const SidePane = ({toggleSidePane}: SidePaneProps) => {
                     <form className="w-full" onSubmit={handleSubmit}>
                         
                         {/* NewsAPI Options */}
-                        <PreferenceSource 
+                        <NewsSourceFilter 
                             source={NewsAPI}
                             setSouce={setNewsAPI}
                             isLoadingData={isLoadingData}
@@ -151,7 +151,7 @@ const SidePane = ({toggleSidePane}: SidePaneProps) => {
                             />
                         
                         {/* New York Times Options */}
-                        <PreferenceSource 
+                        <NewsSourceFilter 
                             source={NyTimes}
                             setSouce={setNyTimes}
                             isLoadingData={isLoadingData}
@@ -163,7 +163,7 @@ const SidePane = ({toggleSidePane}: SidePaneProps) => {
                             />
                         
                         {/* Guardian Options */}
-                        <PreferenceSource 
+                        <NewsSourceFilter 
                             source={Guardian}
                             setSouce={setGuardian}
                             isLoadingData={isLoadingData}
