@@ -4,9 +4,9 @@ import { toast } from 'react-toastify';
 import { z, ZodError } from 'zod';
 import { CubeTransparentIcon } from '@heroicons/react/20/solid';
 import { AuthContext } from './../context/AuthContext';
+import { API_BASE_URL } from './../config/api';
 
-
-interface RegisterFormData {
+type RegisterFormData = {
   name: string;
   email: string;
   password: string;
@@ -19,40 +19,35 @@ const Register = () => {
   const registerMutation = useMutation(
     async (formData: RegisterFormData) => {
       setIsLoading(true);
-      const response = await fetch('http://localhost:8000/api/register', {
+      const registerResponse = await fetch(`${API_BASE_URL}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
-      const data = await response.json();
-      // Handle response data here
-      if (response.ok) {
-        // Registration successful
-        // toast.success(data.message);
-        const response = await fetch('http://localhost:8000/api/login', {
+      const registerData = await registerResponse.json();
+      
+      if (registerResponse.ok) {
+        const loginResponse = await fetch(`${API_BASE_URL}/login`, {
           method: 'POST',
           body: JSON.stringify(formData),
           headers: {
             'Content-Type': 'application/json',
           },
         });
-        const data = await response.json();
-        // Handle response data here
-        if (response.ok) {
-          // Login successful
+        const loginData = await loginResponse.json();
+        
+        if (loginResponse.ok) {
           toast.success('Logged in successfully.');
-          localStorage.setItem('token', data.token);
+          localStorage.setItem('token', loginData.token);
           handleLogin();
         } else {
-          // Login failed
           toast.error('Failed to login.');
         }
         setIsLoading(false);
       } else {
-        // Registration failed
-        toast.error(data.message);
+        toast.error(registerData.message);
         setIsLoading(false);
       }
     }
@@ -67,7 +62,7 @@ const Register = () => {
     };
 
     try {
-      registerFormSchema.parse(formData); 
+      registerFormSchema.parse(formData);
       registerMutation.mutate(formData);
     } catch (error: unknown) {
       if (error instanceof ZodError) {
@@ -98,7 +93,9 @@ const Register = () => {
           <input type="password" id="password" name="password" placeholder="Password" className="mb-2 w-full" />
         </div>
         <div className="flex">
-          <button type="submit" className="bg-gray-700 text-white px-2 py-1" disabled={isLoading}>Register</button>
+          <button type="submit" className="bg-gray-700 text-white px-2 py-1" disabled={isLoading}>
+            Register
+          </button>
           {isLoading && <CubeTransparentIcon className="w-5 h-5 m-1.5 animate-spin" />}
         </div>
       </form>

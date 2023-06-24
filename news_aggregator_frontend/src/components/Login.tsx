@@ -4,40 +4,39 @@ import { toast } from 'react-toastify';
 import { z, ZodError } from 'zod';
 import { CubeTransparentIcon } from '@heroicons/react/20/solid';
 import { AuthContext } from './../context/AuthContext';
+import { API_BASE_URL } from './../config/api';
 
-interface LoginFormData {
+type LoginFormData = {
   email: string;
   password: string;
 }
 
-const Login = () => {
-    const { handleLogin } = useContext(AuthContext);
-    const [isLoading, setIsLoading] = useState(false);
+const Login: React.FC = () => {
+  const { handleLogin } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const loginMutation = useMutation(
-    async (formData: LoginFormData) => {
-      setIsLoading(true);
-      const response = await fetch('http://localhost:8000/api/login', {
-        method: 'POST',
-        body: JSON.stringify(formData),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const data = await response.json();
-      // Handle response data here
-      if (response.ok) {
-        // Login successful
-        toast.success('Logged in successfully.');
-        localStorage.setItem('token', data.token);
-        handleLogin();
-      } else {
-        // Login failed
-        toast.error('Failed to login.');
-      }
-      setIsLoading(false);
+  const loginMutation = useMutation(async (formData: LoginFormData) => {
+    setIsLoading(true);
+    const response = await fetch(`${API_BASE_URL}/login`, {
+      method: 'POST',
+      body: JSON.stringify(formData),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await response.json();
+    // Handle response data here
+    if (response.ok) {
+      // Login successful
+      toast.success('Logged in successfully.');
+      localStorage.setItem('token', data.token);
+      handleLogin();
+    } else {
+      // Login failed
+      toast.error('Failed to login.');
     }
-  );
+    setIsLoading(false);
+  });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -66,20 +65,20 @@ const Login = () => {
   return (
     <div className="absolute bg-gray-300 p-2 top-20 right-5 w-[250px]">
       <h1 className="text-lg font-medium">Login</h1>
-        <form onSubmit={handleSubmit}>
-            <div>
-            <input type="email" id="email" name="email" placeholder="Email" className="mb-2 w-full"  />
-            </div>
-            <div>
-            <input type="password" id="password" name="password" placeholder="Password" className="mb-2 w-full" />
-            </div>
-            <div className="flex">
-              <button type="submit" className="bg-gray-700 text-white px-2 py-1" disabled={isLoading}>
-                Login
-              </button>
-              {isLoading && <CubeTransparentIcon className="w-5 h-5 m-1.5 animate-spin" />}
-            </div>
-        </form>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <input type="email" id="email" name="email" placeholder="Email" className="mb-2 w-full" />
+        </div>
+        <div>
+          <input type="password" id="password" name="password" placeholder="Password" className="mb-2 w-full" />
+        </div>
+        <div className="flex">
+          <button type="submit" className="bg-gray-700 text-white px-2 py-1" disabled={isLoading}>
+            Login
+          </button>
+          {isLoading && <CubeTransparentIcon className="w-5 h-5 m-1.5 animate-spin" />}
+        </div>
+      </form>
     </div>
   );
 };

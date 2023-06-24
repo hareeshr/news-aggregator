@@ -1,24 +1,22 @@
-import { QueryClient, QueryClientProvider } from 'react-query'
-import MainContent from './components/MainContent';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Header from './components/Header';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { DataProvider } from './context/DataContext';
+import Header from './components/Header';
+import MainContent from './components/MainContent';
 import SearchContainer from './components/SearchContainer';
-
 
 const queryClient = new QueryClient();
 
 const App = () => {
- 
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <DataProvider>
           <BrowserRouter>
-            <div className="container mx-auto my-0 justify-self-center p-5 ">
+            <div className="container mx-auto my-0 justify-self-center p-5">
               <Header />
               <main className="py-10">
                 <Routes>

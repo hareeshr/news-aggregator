@@ -1,6 +1,7 @@
 import { ArrowRightCircleIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import NewsSourceFilter from "./NewsSourceFilter";
 import { categoryItem } from "../types/news";
 import Multiselect from 'multiselect-react-dropdown';
@@ -20,29 +21,24 @@ type FormData = {
 }
 
 function Search() {
-  // const [searchInput, setSearchInput] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
-  
+  const formRef = useRef<HTMLFormElement>(null);
+  const NewsAPIRef = useRef<Multiselect | null>(null);
+  const NyTimesRef = useRef<Multiselect | null>(null);
+  const GuardianRef = useRef<Multiselect | null>(null);
+  const queryClient = useQueryClient();
+  const { categories, isLoadingData } = useData();
+  const navigate = useNavigate();
+
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
-
   const [NewsAPI, setNewsAPI] = useState(false);
   const [NewsAPIOptions, setNewsAPIOptions] = useState<categoryItem[]>([]);
   const [NyTimes, setNyTimes] = useState(false);
   const [NyTimesOptions, setNyTimesOptions] = useState<categoryItem[]>([]);
   const [Guardian, setGuardian] = useState(false);
   const [GuardianOptions, setGuardianOptions] = useState<categoryItem[]>([]);
-
-  const NewsAPIRef = useRef<Multiselect | null>(null);
-  const NyTimesRef = useRef<Multiselect | null>(null);
-  const GuardianRef = useRef<Multiselect | null>(null);
-
-  const queryClient = useQueryClient();
-
-  const { categories, isLoadingData } = useData();
-  const navigate = useNavigate();
 
   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setStartDate(e.target.value);
@@ -55,30 +51,41 @@ function Search() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Check if searchInputRef value is empty
+    const searchInputValue = searchInputRef.current?.value;
+    if (!searchInputValue || searchInputValue.trim() === '') {
+      toast.error('Please enter a search query');
+      return;
+    }
     queryClient.invalidateQueries('search');
 
     const formData: FormData = {
       q: searchInputRef.current?.value || ''
     }
 
-    if(startDate) formData.startDate = startDate;
-    if(endDate) formData.endDate = endDate;
+    if (startDate) formData.startDate = startDate;
+    if (endDate) formData.endDate = endDate;
 
-    if(NewsAPI) formData.NewsAPI = "true";
-    let NewsAPICategories = NewsAPIRef.current?.getSelectedItems();
-    if(NewsAPICategories && NewsAPICategories.length > 0 ) formData.NewsAPICategories = NewsAPICategories.map((item:categoryItem) => item.key).join(",") || "";
-    
-    if(NyTimes) formData.NyTimes = "true";
-    let NyTimesCategories = NyTimesRef.current?.getSelectedItems();
-    if(NyTimesCategories && NyTimesCategories.length > 0 ) formData.NyTimesCategories = NyTimesCategories.map((item:categoryItem) => item.key).join(",") || "";
+    if (NewsAPI) {
+      formData.NewsAPI = "true";
+      const NewsAPICategories = NewsAPIRef.current?.getSelectedItems();
+      formData.NewsAPICategories = NewsAPICategories?.map((item: categoryItem) => item.key).join(",") || "";
+    }
 
-    if(Guardian) formData.Guardian = "true";
-    let GuardianCategories = GuardianRef.current?.getSelectedItems();
-    if(GuardianCategories && GuardianCategories.length > 0 ) formData.GuardianCategories = GuardianCategories.map((item:categoryItem) => item.key).join(",") || "";
+    if (NyTimes) {
+      formData.NyTimes = "true";
+      const NyTimesCategories = NyTimesRef.current?.getSelectedItems();
+      formData.NyTimesCategories = NyTimesCategories?.map((item: categoryItem) => item.key).join(",") || "";
+    }
+
+    if (Guardian) {
+      formData.Guardian = "true";
+      const GuardianCategories = GuardianRef.current?.getSelectedItems();
+      formData.GuardianCategories = GuardianCategories?.map((item: categoryItem) => item.key).join(",") || "";
+    }
 
     const queryParams = new URLSearchParams(formData);
     const queryString = queryParams.toString();
-    console.log(queryString);
     navigate(`/search?${queryString}`);
 
     handleCloseFocused();
@@ -86,7 +93,6 @@ function Search() {
 
   const handleCloseFocused = () => {
     setIsFocused(false);
-    
     setNewsAPIOptions(NewsAPIRef.current?.getSelectedItems() || []);
     setNyTimesOptions(NyTimesRef.current?.getSelectedItems() || []);
     setGuardianOptions(GuardianRef.current?.getSelectedItems() || []);
@@ -106,15 +112,9 @@ function Search() {
     };
   }, []);
 
-  
-
   return (
-    <form onSubmit={handleSubmit}
-      className="relative"
-      ref={formRef}>
-
+    <form onSubmit={handleSubmit} className="relative" ref={formRef}>
       <MagnifyingGlassIcon className="absolute w-6 h-6 text-gray-400 top-2.5 left-2" />
-
       <input
         type="text"
         placeholder="Search"
@@ -123,46 +123,44 @@ function Search() {
         ref={searchInputRef}
       />
 
-
       {isFocused && (
         <div className="advancedFilters absolute border bg-white w-full p-3 flex flex-col gap-2 z-10">
-
           {/* NewsAPI Options */}
           <NewsSourceFilter 
-              source={NewsAPI}
-              setSouce={setNewsAPI}
-              isLoadingData={isLoadingData}
-              categories={categories.NewsAPI}
-              id="NewsAPICheckbox"
-              name="NewsAPI"
-              selectedValues={NewsAPIOptions}
-              sourceRef={NewsAPIRef}
-              singleSelect={true}
-              />
+            source={NewsAPI}
+            setSource={setNewsAPI}
+            isLoadingData={isLoadingData}
+            categories={categories.NewsAPI}
+            id="NewsAPICheckbox"
+            name="NewsAPI"
+            selectedValues={NewsAPIOptions}
+            sourceRef={NewsAPIRef}
+            singleSelect={true}
+          />
           
           {/* New York Times Options */}
           <NewsSourceFilter 
-              source={NyTimes}
-              setSouce={setNyTimes}
-              isLoadingData={isLoadingData}
-              categories={categories.NyTimes}
-              id="NyTimesCheckbox"
-              name="New York Times"
-              selectedValues={NyTimesOptions}
-              sourceRef={NyTimesRef}
-              />
+            source={NyTimes}
+            setSource={setNyTimes}
+            isLoadingData={isLoadingData}
+            categories={categories.NyTimes}
+            id="NyTimesCheckbox"
+            name="New York Times"
+            selectedValues={NyTimesOptions}
+            sourceRef={NyTimesRef}
+          />
           
           {/* Guardian Options */}
           <NewsSourceFilter 
-              source={Guardian}
-              setSouce={setGuardian}
-              isLoadingData={isLoadingData}
-              categories={categories.Guardian}
-              id="GuardianCheckbox"
-              name="Guardian"
-              selectedValues={GuardianOptions}
-              sourceRef={GuardianRef}
-              />
+            source={Guardian}
+            setSource={setGuardian}
+            isLoadingData={isLoadingData}
+            categories={categories.Guardian}
+            id="GuardianCheckbox"
+            name="Guardian"
+            selectedValues={GuardianOptions}
+            sourceRef={GuardianRef}
+          />
 
           <div className="mt-2">
             <label htmlFor="startDate">Start Date:</label>
@@ -183,7 +181,6 @@ function Search() {
               onChange={handleEndDateChange}
             />
           </div>
-
         </div>
       )}
 
@@ -194,4 +191,4 @@ function Search() {
   );
 }
 
-export default Search
+export default Search;

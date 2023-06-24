@@ -1,6 +1,7 @@
 import { createContext, useContext } from 'react';
 import { useQuery } from 'react-query';
 import { categoryItem } from './../types/news'
+import { API_BASE_URL } from './../config/api';
 
 type DataContextType = {
   categories: {
@@ -27,7 +28,7 @@ export function useData() {
 export function DataProvider({ children }: { children:React.ReactNode}) {
   // Fetch initial data from the API
   const { data: initialData, isLoading:isLoadingData } = useQuery('data', async () => {
-    const response = await fetch('http://localhost:8000/api/categories');
+    const response = await fetch(`${API_BASE_URL}/categories`);
     if (!response.ok) {
       throw new Error('Failed to fetch categories');
     }

@@ -1,7 +1,7 @@
-
 type TimeAgoProps = {
-    timestamp: string
-}
+  timestamp: string;
+};
+
 function TimeAgo({ timestamp }: TimeAgoProps) {
   const timeAgo = () => {
     const currentTime = new Date();
@@ -13,11 +13,11 @@ function TimeAgo({ timestamp }: TimeAgoProps) {
     const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 
     if (minutes < 60) {
-      return `${minutes} minutes ago`;
+      return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
     } else if (hours < 24) {
-      return `${hours} hours ago`;
+      return `${hours} hour${hours === 1 ? '' : 's'} ago`;
     } else {
-      return `${days} days ago`;
+      return `${days} day${days === 1 ? '' : 's'} ago`;
     }
   };
 

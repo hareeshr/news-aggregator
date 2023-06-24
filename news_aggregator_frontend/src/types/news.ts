@@ -1,5 +1,5 @@
 
-export interface NewsItem {
+export type NewsItem = {
     id: string;
     source: string;
     title: string;
@@ -8,7 +8,7 @@ export interface NewsItem {
     url: string;
 }
 
-export interface categoryItem {
+export type categoryItem = {
     key: string,
     name: string
 }
