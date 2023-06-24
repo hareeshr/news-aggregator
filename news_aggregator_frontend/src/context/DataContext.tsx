@@ -27,9 +27,9 @@ export function useData() {
 export function DataProvider({ children }: { children:React.ReactNode}) {
   // Fetch initial data from the API
   const { data: initialData, isLoading:isLoadingData } = useQuery('data', async () => {
-    const response = await fetch('http://localhost:8000/api/getCategories');
+    const response = await fetch('http://localhost:8000/api/categories');
     if (!response.ok) {
-      throw new Error('Failed to fetch initial data');
+      throw new Error('Failed to fetch categories');
     }
     return response.json();
   });

@@ -7,12 +7,12 @@ const MainContent = () => {
     const { isLoggedIn  } = useContext(AuthContext);
 
   return (
-    <main className="py-10">
-        { isLoggedIn
-            ? <HomeLoggedInUser />
-            : <HomeAllUser />
-        }
-    </main>
+    <>
+      { isLoggedIn
+          ? <HomeLoggedInUser />
+          : <HomeAllUser />
+      }
+    </>
   )
 }
 

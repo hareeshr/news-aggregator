@@ -4,12 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 use App\Libraries\NewsApiLibrary;
 use App\Libraries\NyTimesLibrary;
 use App\Libraries\GuardianLibrary;
-use Illuminate\Support\Facades\Log;
-
 
 
 class NewsController extends Controller
@@ -17,30 +16,20 @@ class NewsController extends Controller
 
     public function getHomeArticles(Request $request)
     {
-        // $this->validate($request, [
-        //     'q' => 'string',
-        //     'sources' => 'string',
-        //     'country' => 'string|in:ae,ar,at,au,be,bg,br,ca,ch,cn,co,cu,cz,de,eg,fr,gb,gr,hk,hu,id,ie,il,in,it,jp,kr,lt,lv,ma,mx,my,ng,nl,no,nz,ph,pl,pt,ro,rs,ru,sa,se,sg,si,sk,th,tr,tw,ua,us,ve,za',
-        //     'category' => 'string|in:business,entertainment,general,health,science,sports,technology',
-        //     'page_size' => 'integer',
-        //     'page' => 'integer',
-        // ]);
         return $this->allHomeArticles();
     }
     private function  allHomeArticles(){
 
         // Get articles from NewsAPI
-        $newsAPI = new NewsApiLibrary();
-        $newsApiArticles = $newsAPI->getArticles();
-        // return response()->json($newsApiArticles);
+        $newsAPIlib = new NewsApiLibrary();
+        $newsApiArticles = $newsAPIlib->getArticles();
 
-        $nyTimesAPI = new NyTimesLibrary();
-        $nyTimesArticles = $nyTimesAPI->getArticles();
-        // return response()->json($nyTimesArticles);
+        $nyTimesAPIlib = new NyTimesLibrary();
+        $nyTimesArticles = $nyTimesAPIlib->getArticles();
 
-        $GuardianAPI = new GuardianLibrary();
-        $guardianArticles = $GuardianAPI->getArticles();
-        // return response()->json($guardianArticles);
+        $GuardianAPIlib = new GuardianLibrary();
+        $guardianArticles = $GuardianAPIlib->getArticles();
+
         $combinedNews = $this->newsCombiner([
             "NewsAPI" => $newsApiArticles,
             "NYTimesAPI" => $nyTimesArticles,
@@ -71,22 +60,22 @@ class NewsController extends Controller
             if($preferenceData->NewsAPI == true){
                 $categories = implode(", ", array_column($preferenceData->NewsAPICategories, "key"));
                 
-                $newsAPI = new NewsApiLibrary();
+                $newsAPIlib = new NewsApiLibrary();
                 if($categories == "")
-                    $newsApiArticles = $newsAPI->getArticles();
+                    $newsApiArticles = $newsAPIlib->getArticles();
                 else
-                    $newsApiArticles = $newsAPI->getPersonalizedArticles($categories);
+                    $newsApiArticles = $newsAPIlib->getPersonalizedArticles($categories);
                 $newsArticles["NewsAPI"] = $newsApiArticles;
             }
 
             if($preferenceData->NyTimes == true){
                 $categories = implode('", "', array_column($preferenceData->NyTimesCategories, "key"));
                 
-                $nyTimesAPI = new NyTimesLibrary();
+                $nyTimesAPIlib = new NyTimesLibrary();
                 if($categories == "")
-                    $nyTimesArticles = $nyTimesAPI->getArticles();
+                    $nyTimesArticles = $nyTimesAPIlib->getArticles();
                 else
-                    $nyTimesArticles = $nyTimesAPI->getPersonalizedArticles($categories);
+                    $nyTimesArticles = $nyTimesAPIlib->getPersonalizedArticles($categories);
 
                 $newsArticles["NYTimesAPI"] = $nyTimesArticles;
             }
@@ -94,15 +83,88 @@ class NewsController extends Controller
             if($preferenceData->Guardian == true){
                 $categories = implode('|', array_column($preferenceData->GuardianCategories, "key"));
                 
-                $GuardianAPI = new GuardianLibrary();
+                $GuardianAPIlib = new GuardianLibrary();
                 if($categories == "")
-                    $guardianArticles = $GuardianAPI->getArticles();
+                    $guardianArticles = $GuardianAPIlib->getArticles();
                 else
-                    $guardianArticles = $GuardianAPI->getPersonalizedArticles($categories);
+                    $guardianArticles = $GuardianAPIlib->getPersonalizedArticles($categories);
 
                     $newsArticles["GuardianAPI"] = $guardianArticles;
             }
 
+            $combinedNews = $this->newsCombiner($newsArticles);
+ 
+            return response()->json($combinedNews);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to fetch personalized articles','error' => $e], 500);
+        }
+    }
+
+    
+    public function search(Request $request)
+    {
+        try {
+
+            // Define the validation rules for the query parameters
+            $rules = [
+                'q' => 'nullable|string',
+                'startDate' => 'nullable|date',
+                'endDate' => 'nullable|date',
+                'NewsAPI' => 'nullable|string|in:true,false',
+                'NewsAPICategories' => 'nullable|string',
+                'NyTimes' => 'nullable|string|in:true,false',
+                'NyTimesCategories' => 'nullable|string',
+                'Guardian' => 'nullable|string|in:true,false',
+                'GuardianCategories' => 'nullable|string',
+            ];
+
+            // Create a validator instance
+            $validator = Validator::make($request->query(), $rules);
+
+            // Check if validation fails
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 400);
+            }
+
+            // Retrieve the validated query parameters
+            $validatedData = $validator->validated();
+
+            // Assign the validated query parameters to variables with null as default value
+            $q = $validatedData['q'] ?? null;
+            $startDate = $validatedData['startDate'] ?? null;
+            $endDate = $validatedData['endDate'] ?? null;
+            $newsApi = isset($validatedData['NewsAPI']) ? filter_var($validatedData['NewsAPI'], FILTER_VALIDATE_BOOLEAN) : false;
+            $newsApiCategories = $validatedData['NewsAPICategories'] ?? null;
+            $nyTimes = isset($validatedData['NyTimes']) ? filter_var($validatedData['NyTimes'], FILTER_VALIDATE_BOOLEAN) : false;
+            $nyTimesCategories = $validatedData['NyTimesCategories'] ?? null;
+            $guardian = isset($validatedData['Guardian']) ? filter_var($validatedData['Guardian'], FILTER_VALIDATE_BOOLEAN) : false;
+            $guardianCategories = $validatedData['GuardianCategories'] ?? null;
+
+
+            if($newsApi == false
+                && $nyTimes == false
+                && $guardian == false){
+                    $newsApi = $nyTimes = $guardian = true;
+                }
+
+
+            if($newsApi == true){                
+                $newsAPIlib = new NewsApiLibrary();
+                $newsApiArticles = $newsAPIlib->search($q, $newsApiCategories, $startDate, $endDate);
+                $newsArticles["NewsAPI"] = $newsApiArticles;
+            }
+
+            if($nyTimes == true){
+                $nyTimesAPIlib = new NyTimesLibrary();
+                $nyTimesArticles = $nyTimesAPIlib->search($q, $nyTimesCategories, $startDate, $endDate);
+                $newsArticles["NYTimesAPI"] = $nyTimesArticles;
+            }
+            
+            if($guardian == true){
+                $GuardianAPIlib = new GuardianLibrary();
+                $guardianArticles = $GuardianAPIlib->search($q, str_replace(",", "|", $guardianCategories), $startDate, $endDate);
+                $newsArticles["GuardianAPI"] = $guardianArticles;
+            }
             $combinedNews = $this->newsCombiner($newsArticles);
  
             return response()->json($combinedNews);

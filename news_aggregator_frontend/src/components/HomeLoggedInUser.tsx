@@ -6,14 +6,14 @@ import { NewsItem } from '../types/news.ts'
 const HomeLoggedInUser = () => {
     const token = localStorage.getItem('token');
     const { data, isLoading, error } = useQuery<NewsItem[]>('personalizedNews', async () => {
-        const response = await fetch('http://localhost:8000/api/getPersonalizedArticles', {
+        const response = await fetch('http://localhost:8000/api/personalized-articles', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
       
         if (!response.ok) {
-          throw new Error('Failed to fetch user data');
+          throw new Error('Failed to fetch personalized articles');
         }
       
         return response.json();

@@ -49,6 +49,27 @@ class NewsApiLibrary
 
         return [];
     }
+
+    public function search( $q, $category, $from, $to ) {
+
+        $sources = null;
+        $domains = null;
+        $exclude_domains = null;
+        $language = "en";
+        $sort_by = null;
+        $page_size = 10;
+        $page = 1;
+
+        $top_headlines = $this->newsapi->getEverything( $q.'+'.$category, $sources, $domains, $exclude_domains, $from, $to, $language, $sort_by, $page_size, $page );
+        
+
+
+        if ($top_headlines) {
+            return $top_headlines->articles;
+        }
+
+        return [];
+    }
     public function getCategories(){
         $categories = [
             (object) ['key'=>'business', 'name'=>'Business'],

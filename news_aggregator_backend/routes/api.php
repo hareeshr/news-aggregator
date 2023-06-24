@@ -25,13 +25,13 @@ use App\Http\Controllers\PreferenceController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
-Route::get('/getHomeArticles', [NewsController::class, 'getHomeArticles']);
-Route::get('/getCategories', [NewsController::class, 'getCategories']);
+Route::get('/home-articles', [NewsController::class, 'getHomeArticles']);
+Route::get('/categories', [NewsController::class, 'getCategories']);
+Route::get('/search', [NewsController::class, 'search']);
 
 
 
 Route::middleware('auth:sanctum')->get('/user/details', [UserController::class, 'getUserDetails']); //
 Route::middleware('auth:sanctum')->post('/user/preferences', [PreferenceController::class, 'saveUserPreferences']); //
 Route::middleware('auth:sanctum')->get('/user/preferences', [PreferenceController::class, 'getUserPreferences']); //
-Route::middleware('auth:sanctum')->get('/getPersonalizedArticles', [NewsController::class, 'getPersonalizedArticles']); //
-// Route::middleware('auth:sanctum')->get('/combined-news', [NewsController::class, 'getCombinedNews']); //
+Route::middleware('auth:sanctum')->get('/personalized-articles', [NewsController::class, 'getPersonalizedArticles']); //
