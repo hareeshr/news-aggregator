@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
-import { NewsItem } from './../types/news.ts'
 import { NewspaperIcon } from '@heroicons/react/24/solid';
 import TimeAgo from './TimeAgo.tsx'
+import { NewsItem } from './../types/news.ts'
 
 type NewsArticleProps = {
     newsItem: NewsItem

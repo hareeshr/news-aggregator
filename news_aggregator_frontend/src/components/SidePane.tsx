@@ -1,12 +1,12 @@
-import { XMarkIcon, CubeTransparentIcon } from '@heroicons/react/24/solid'
-import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { useData } from './../context/DataContext';
 import { useState, useEffect, useRef } from 'react'
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { XMarkIcon, CubeTransparentIcon } from '@heroicons/react/24/solid'
+import Multiselect from 'multiselect-react-dropdown';
+import { toast } from 'react-toastify';
+import { useData } from './../context/DataContext';
 import UserData from './UserData';
 import PreferenceSource from './PreferenceSource';
 import { categoryItem } from './../types/news'
-import Multiselect from 'multiselect-react-dropdown';
-import { toast } from 'react-toastify';
 
 
 type PreferenceData = {

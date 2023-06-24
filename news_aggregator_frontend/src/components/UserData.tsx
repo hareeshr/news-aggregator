@@ -1,5 +1,5 @@
-import { UserCircleIcon } from '@heroicons/react/24/solid'
 import { useQuery } from 'react-query';
+import { UserCircleIcon } from '@heroicons/react/24/solid'
 
 interface UserData {
     name: string;

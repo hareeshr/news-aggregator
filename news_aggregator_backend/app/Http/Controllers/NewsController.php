@@ -51,7 +51,7 @@ class NewsController extends Controller
     }
     public function getPersonalizedArticles(Request $request)
     {
-        // try {
+        try {
             $user = Auth::user();
 
             if (!$user) {
@@ -106,9 +106,9 @@ class NewsController extends Controller
             $combinedNews = $this->newsCombiner($newsArticles);
  
             return response()->json($combinedNews);
-        // } catch (\Exception $e) {
-        //     return response()->json(['message' => 'Failed to fetch personalized articles','error' => $e], 500);
-        // }
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to fetch personalized articles','error' => $e], 500);
+        }
     }
 
     public function getCategories(Request $request) {

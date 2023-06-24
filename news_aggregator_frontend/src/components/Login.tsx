@@ -2,8 +2,8 @@ import React, { useState, useContext } from 'react';
 import { useMutation } from 'react-query';
 import { toast } from 'react-toastify';
 import { z, ZodError } from 'zod';
-import { AuthContext } from './../context/AuthContext';
 import { CubeTransparentIcon } from '@heroicons/react/20/solid';
+import { AuthContext } from './../context/AuthContext';
 
 interface LoginFormData {
   email: string;

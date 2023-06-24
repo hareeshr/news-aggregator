@@ -1,8 +1,8 @@
 import { useState, useContext } from 'react'
+import { UserCircleIcon } from '@heroicons/react/24/solid';
+import { AuthContext } from './../context/AuthContext';
 import Login from './Login';
 import Register from './Register';
-import { AuthContext } from './../context/AuthContext';
-import { UserCircleIcon } from '@heroicons/react/24/solid';
 import SidePane from './SidePane';
 
 type HeaderProps = {
