@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PreferenceController;
 
 
 /*
@@ -30,7 +31,7 @@ Route::get('/getCategories', [NewsController::class, 'getCategories']);
 
 
 Route::middleware('auth:sanctum')->get('/user/details', [UserController::class, 'getUserDetails']); //
-Route::middleware('auth:sanctum')->post('/user/preferences', [UserController::class, 'saveUserPreferences']); //
-Route::middleware('auth:sanctum')->get('/user/preferences', [UserController::class, 'getUserPreferences']); //
+Route::middleware('auth:sanctum')->post('/user/preferences', [PreferenceController::class, 'saveUserPreferences']); //
+Route::middleware('auth:sanctum')->get('/user/preferences', [PreferenceController::class, 'getUserPreferences']); //
 Route::middleware('auth:sanctum')->get('/getPersonalizedArticles', [NewsController::class, 'getPersonalizedArticles']); //
 // Route::middleware('auth:sanctum')->get('/combined-news', [NewsController::class, 'getCombinedNews']); //

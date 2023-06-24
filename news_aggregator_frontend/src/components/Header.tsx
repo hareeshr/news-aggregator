@@ -4,6 +4,7 @@ import { AuthContext } from './../context/AuthContext';
 import Login from './Login';
 import Register from './Register';
 import SidePane from './SidePane';
+import Search from './Search';
 
 type HeaderProps = {
     // isLoggedIn: boolean
@@ -40,9 +41,10 @@ const Header = ({ }: HeaderProps) => {
                 className="block md:hidden"/>
         </div>
         <div className="flex-grow">
-            <button className="border-solid border-2 border-gray-300 p-2 w-full text-left">
+            {/* <button className="border-solid border-2 border-gray-300 p-2 w-full text-left">
                 Search
-            </button>
+            </button> */}
+            <Search />
         </div>
         <div>
             {!isLoggedIn ? (

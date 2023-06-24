@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }: { children:React.ReactNode}) => {
 
   const handleLogin = () => {
     setIsLoggedIn(true);
-    console.log(localStorage.getItem('token'));
   };
   const handleLogout = () => {
     localStorage.removeItem('token');
