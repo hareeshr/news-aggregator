@@ -13,13 +13,13 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install docker extension
-RUN docker-php-ext-install pdo
-# RUN docker-php-ext-install mbstring
-# RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install pdo pdo_mysql bcmath
 
 # Set working directory
 WORKDIR /app/backend
+
+# Copy the .env file
+COPY .env.example .env
 
 COPY . .
 RUN composer install
