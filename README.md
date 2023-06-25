@@ -46,7 +46,8 @@ To run the News Aggregator, follow these steps:
 5.  Build and start the Docker containers using `docker-compose`:
     
 
-`docker-compose build docker-compose up -d`
+`docker-compose build`
+`docker-compose up -d`
 
 6.  Once the containers are up and running, you can access the News Aggregator website by visiting `http://localhost` in your web browser.
 
