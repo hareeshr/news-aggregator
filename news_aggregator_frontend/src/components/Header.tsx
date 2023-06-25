@@ -37,10 +37,10 @@ const Header: React.FC = () => {
     if (!isLoggedIn) {
       return (
         <>
-          <button className="mx-5 bg-gray-800 text-white p-2" onClick={toggleRegisterForm}>
+          <button className="ml-5 bg-gray-800 text-white p-2" onClick={toggleRegisterForm}>
             Sign Up
           </button>
-          <button className="mx-5 p-2" onClick={toggleLoginForm}>
+          <button className="ml-5 p-2" onClick={toggleLoginForm}>
             Log In
           </button>
           {showLoginForm && <Login />}
@@ -53,7 +53,7 @@ const Header: React.FC = () => {
           <button className="mx-1" onClick={toggleSidePane}>
             <UserCircleIcon className="w-10 h-10" />
           </button>
-          <button className="mx-5 bg-gray-800 text-white p-2" onClick={handleLogoutButton}>
+          <button className="ml-5 bg-gray-800 text-white p-2" onClick={handleLogoutButton}>
             Log out
           </button>
           {showSidePane && <SidePane toggleSidePane={toggleSidePane} />}
@@ -63,8 +63,8 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="flex gap-10">
-        <div className="flex justify-center items-center">
+    <header className="flex gap-5 lg:gap-10">
+        <div className="flex justify-center items-center z-20">
             <Link to="/">
                 <img src="./news-aggregator-logo.png" alt="News Aggregator Logo" width="250" height="32" className="hidden md:block" />
                 <img src="./favicon.png" alt="News Aggregator Logo" width="32" height="32" className="block md:hidden" />

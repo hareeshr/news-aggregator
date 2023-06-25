@@ -124,7 +124,7 @@ const SidePane = ({ toggleSidePane }: SidePaneProps) => {
   };
 
   return (
-    <div className="fixed top-0 right-0 w-[20rem] h-full bg-gray-300 p-10 z-10">
+    <div className="fixed top-0 right-0 w-full h-full bg-gray-300 p-10 z-10 md:w-[20rem]">
       <div className="flex flex-col items-center">
         <button className="absolute top-5 right-5 text-gray-800" onClick={toggleSidePane}>
           <XMarkIcon className="w-8 h-8" />

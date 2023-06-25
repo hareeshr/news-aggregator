@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { ArrowRightCircleIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { ArrowRightCircleIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import NewsSourceFilter from "./NewsSourceFilter";
@@ -112,19 +112,29 @@ function Search() {
     };
   }, []);
 
+  // css classes
+  const formCSS = isFocused ? 'top-0 left-0 px-5 py-[4.5rem] fixed bg-white w-full h-full md:relative md:p-0' : 'relative';
+  const searchInputCSS = isFocused ? '' : 'hidden md:block';
+  const searchIconCSS = isFocused ? 'top-[5.2rem] left-7 absolute md:top-2.5 md:left-2' : 'top-2.5 -right-5 absolute md:left-2';
+  const submitIconCSS = isFocused ? 'top-[4.6rem] right-6 block' : 'top-0.5 right-1 hidden md:block';
+  const closeIconCSS = isFocused ? 'top-5 right-5 block md:hidden' : 'hidden'; 
+
   return (
-    <form onSubmit={handleSubmit} className="relative" ref={formRef}>
-      <MagnifyingGlassIcon className="absolute w-6 h-6 text-gray-400 top-2.5 left-2" />
+    <form onSubmit={handleSubmit} className={`${formCSS}`} ref={formRef}>
+      <button type="button" className={`${searchIconCSS}`} onClick={() => setIsFocused(true)}>
+        <MagnifyingGlassIcon className="w-6 h-6 text-gray-400" />
+      </button>
+
       <input
         type="text"
         placeholder="Search"
-        className="border-solid border-2 border-gray-300 p-2 w-full text-left pl-10"
+        className={`border-solid border-2 border-gray-300 p-2 w-full text-left pl-10 ${searchInputCSS}`}
         onFocus={() => setIsFocused(true)}
         ref={searchInputRef}
       />
 
       {isFocused && (
-        <div className="advancedFilters absolute border bg-white w-full p-3 flex flex-col gap-2 z-10">
+        <div className="relative border bg-white w-full p-3 flex flex-col gap-2 z-10 md:absolute">
           {/* NewsAPI Options */}
           <NewsSourceFilter 
             source={NewsAPI}
@@ -184,8 +194,11 @@ function Search() {
         </div>
       )}
 
-      <button type="submit" className="top-0.5 right-1 absolute">
+      <button type="submit" className={`absolute ${submitIconCSS}`}>
         <ArrowRightCircleIcon className="w-10 h-10 text-gray-800"/>
+      </button>
+      <button type="button" className={`absolute ${closeIconCSS}`} onClick={() => setIsFocused(false)}>
+        <XMarkIcon className="w-8 h-8 text-gray-800" />
       </button>
     </form>
   );
