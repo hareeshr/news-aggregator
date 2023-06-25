@@ -12,8 +12,6 @@ php artisan key:generate
 # Update the .env file with MySQL environment variables
 php -r "file_put_contents('.env', str_replace(['DB_DATABASE=', 'DB_USERNAME=', 'DB_PASSWORD='], ['DB_DATABASE=${MYSQL_DATABASE}', 'DB_USERNAME=${MYSQL_USER}', 'DB_PASSWORD=${MYSQL_PASSWORD}'], file_get_contents('.env')));"
 
-cat .env
-
 php artisan route:cache
 php artisan route:clear
 php artisan config:clear
