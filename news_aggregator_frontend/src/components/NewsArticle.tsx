@@ -25,7 +25,7 @@ const NewsArticle: React.FC<NewsArticleProps> = ({ newsItem }) => {
             <div className="font-medium">{stripHTML(newsItem.source)}</div>
             {newsItem.author && <div>- {stripHTML(newsItem.author)}</div>}
           </div>
-          <div className="bg-gray-800 text-white inline-block py-1 px-3 rounded-full text-xs">
+          <div className="bg-gray-800 text-white py-1 px-3 rounded-full text-xs inline-block">
             <TimeAgo timestamp={newsItem.publishedAt} />
           </div>
         </div>

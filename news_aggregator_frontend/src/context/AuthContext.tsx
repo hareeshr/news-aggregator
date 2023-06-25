@@ -9,8 +9,12 @@ type AuthContextType = {
 
 export const AuthContext = createContext<AuthContextType>({
   isLoggedIn: false,
-  handleLogin: () => {},
-  handleLogout: () => {},
+  handleLogin: () => {
+    // handle login
+  },
+  handleLogout: () => {
+    // handle logout
+  },
 });
 
 export const AuthProvider = ({ children }: { children:React.ReactNode}) => {

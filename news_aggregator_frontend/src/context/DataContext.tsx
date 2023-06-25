@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import React, { createContext, useContext } from 'react';
 import { useQuery } from 'react-query';
 import { categoryItem } from './../types/news'
 import { API_BASE_URL } from './../config/api';

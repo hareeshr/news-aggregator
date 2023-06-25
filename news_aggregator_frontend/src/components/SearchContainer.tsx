@@ -1,6 +1,6 @@
+import React, { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
 import NewsList from './NewsList.tsx';
 import { NewsItem } from '../types/news.ts';
 

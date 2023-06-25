@@ -1,3 +1,4 @@
+import React from 'react';
 import { useQuery } from 'react-query';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
 import { API_BASE_URL } from './../config/api';
