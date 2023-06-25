@@ -9,8 +9,10 @@ services:
       - db
     ports:
       - 8000:8000
-    volumes:
-      - ./news_aggregator_backend:/app/backend
+    env_file:
+      - ./env/backend.env
+    # volumes:
+    #   - ./news_aggregator_backend:/app/backend
     networks:
       - app
 
@@ -34,25 +36,12 @@ services:
     ports:
       - "3306:3306"
     env_file:
-      - ./env/mysql.env
+      - ./env/backend.env
     volumes:
       - dbdata:/var/lib/mysql
     networks:
       - app
     restart: always
-
-  phpmyadmin:
-    container_name: news_aggregator_phpmyadmin
-    depends_on:
-      - db
-    image: phpmyadmin/phpmyadmin
-    env_file:
-      - ./env/phpmyadmin.env
-    ports:
-      - 81:80
-    restart: always
-    networks:
-      - app
 
 # Networks
 networks:

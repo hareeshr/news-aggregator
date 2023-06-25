@@ -18,6 +18,7 @@ RUN docker-php-ext-install pdo pdo_mysql bcmath
 # Set working directory
 WORKDIR /app/backend
 
+
 # Copy the .env file
 COPY .env.example .env
 
